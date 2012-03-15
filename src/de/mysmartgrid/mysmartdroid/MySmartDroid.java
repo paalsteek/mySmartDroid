@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuInflater;
 import android.widget.Button;
 import android.util.Log;
 import java.util.Map;
@@ -31,7 +34,7 @@ public class MySmartDroid extends Activity
 						sensors[i],
 						"0a0fa85454554ae6a902d3129fc03175");
 					String values = api.request("minute", "watt");
-					Log.i("MySmartDroid", values);
+					//Log.i("MySmartDroid", values);
 					TreeMap<Integer, Double> map = parseJSON(values);
 					int c = mView.updateValues(i, map);
 					Log.i("MySmartDroid", c + " values updated!");
@@ -61,17 +64,32 @@ public class MySmartDroid extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-				final Button button = (Button) findViewById(R.id.my_button);
 				mView = (MsgGraphView) findViewById(R.id.graph);
-				button.setOnClickListener(
-					new View.OnClickListener() {
-						public void onClick(View v) {
-							mHandler.removeCallbacks(mUpdater);
-							mHandler.post(mUpdater);
-						}
-					}
-				);
     }
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+			case R.id.start:
+				mHandler.removeCallbacks(mUpdater);
+				mHandler.post(mUpdater);
+				return true;
+			case R.id.stop:
+				mHandler.removeCallbacks(mUpdater);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
 
 		TreeMap<Integer, Double> parseJSON(String input)
 		{
@@ -81,9 +99,12 @@ public class MySmartDroid extends Activity
 				for( int x = 0; x < array.length(); x++ )
 				{
 					JSONArray elem = new JSONArray(array.getString(x));
-					int i = elem.getInt(0);
-					double d = elem.getDouble(1);
-					map.put(i, d);
+					try {
+						int i = elem.getInt(0);
+						double d = elem.getDouble(1);
+						map.put(i, d);
+					} catch ( org.json.JSONException e ) {
+					}
 				}
 			} catch ( Exception e )
 			{

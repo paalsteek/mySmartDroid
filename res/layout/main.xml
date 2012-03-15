@@ -4,10 +4,6 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	>
-	<Button android:id="@+id/my_button"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="foobar"/>
 	<de.mysmartgrid.mysmartdroid.MsgGraphView android:id="@+id/graph"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"/>
